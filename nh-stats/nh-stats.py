@@ -21,8 +21,8 @@ ENERGY_COST_KWHR = float(os.environ['NHS_ENERGY_COST_FIAT_PER_KWHR'])
 WEMO_DEVICE_IP = os.environ['NHS_WEMO_DEVICE_IP']
 DEFAULT_ENERGY_COST_FIAT_PER_DAY = float(os.environ['NHS_DEFAULT_ENERGY_COST_FIAT_PER_DAY'])
 
-if WEMO_DEVICE_NAME == 'false':
-	WEMO_DEVICE_NAME = False
+if WEMO_DEVICE_IP == 'false':
+	WEMO_DEVICE_IP = False
 
 FIAT = os.environ['NHS_FIAT_CURRENCY']
 prev_value_file = '/nh-stats/prev_balance.pickle'
