@@ -15,10 +15,6 @@ fi
 echo "pushing ${_docker_repo}:${_nhstats_version}"
 docker push "${_docker_repo}:${_nhstats_version}"
 
-if echo "$_nhstats_tag" | grep -q "^v"; then
-	echo "pushing ${_docker_repo}:latest"
-	docker push "${_docker_repo}:latest"
-else
-	echo "pushing thechunter/nh-stats:master"
-	docker push thechunter/nh-stats:master
-fi
+
+echo "pushing ${_docker_repo}:latest"
+docker push "${_docker_repo}:latest"

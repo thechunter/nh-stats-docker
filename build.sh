@@ -17,8 +17,6 @@ docker build \
 	--tag "${_docker_repo}:${_nhstats_version}" \
 	--no-cache=true .
 
-if echo "$_nhstats_tag" | grep -q "^v"; then
-	docker tag "${_docker_repo}:${_nhstats_version}" "${_docker_repo}:latest"
-else
-	docker tag "${_docker_repo}:${_nhstats_version}" "thechunter/nh-stats:master"
-fi
+
+docker tag "${_docker_repo}:${_nhstats_version}" "${_docker_repo}:latest"
+
