@@ -31,6 +31,7 @@ curr_price = crypto_api.get_btc_price(FIAT)
 
 print("Balances: \n")
 balances = crypto_api.get_balances(wallet=WALLET)
+curr_timestamp = time.time()
 
 num_algos = len(balances)
 total_balance = 0.0
@@ -64,7 +65,6 @@ if r.status_code != 204:
     sys.exit(1)  	
 
 #write current total to file
-curr_timestamp = time.time()
 curr_data = {
     'timestamp': curr_timestamp,
     'total_balance': total_balance   
@@ -76,10 +76,39 @@ with open(prev_value_file, 'rb') as f:
     prev_data = pickle.load(f)
 
 #Handle wrapping when Nicehash pays out the balance
+measurement_time_delta = float(curr_data['timestamp']-prev_data['timestamp'])
+
 if(curr_data['total_balance'] < prev_data['total_balance']):
-	btc_per_day = 86400.0 * ((curr_data['total_balance']+prev_data['total_balance'])-prev_data['total_balance']) / (curr_data['timestamp']-prev_data['timestamp']) 
+	btc_per_day = 86400.0 * (curr_data['total_balance']) / (measurement_time_delta)
+	debug1 = 1.0
+	debug2 = float(curr_data['total_balance'])
+	debug3 = measurement_time_delta
 else:
-	btc_per_day = 86400.0 * (curr_data['total_balance']-prev_data['total_balance']) / (curr_data['timestamp']-prev_data['timestamp']) 
+	btc_per_day = 86400.0 * (curr_data['total_balance']-prev_data['total_balance']) / (measurement_time_delta) 
+	debug1 = 1.0
+	debug2 = float(curr_data['total_balance']-prev_data['total_balance'])
+	debug3 = measurement_time_delta	
+
+print("Time between measurements: {0:f}".format(measurement_time_delta))	
+
+v = 'debug1 value=%f' % debug1
+r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
+if r.status_code != 204:
+    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
+    sys.exit(1)
+
+v = 'debug2 value=%f' % debug2
+r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
+if r.status_code != 204:
+    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
+    sys.exit(1)
+
+v = 'debug3 value=%f' % debug3
+r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
+if r.status_code != 204:
+    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
+    sys.exit(1)
+
 
 
 with open(prev_value_file, 'wb') as f:
