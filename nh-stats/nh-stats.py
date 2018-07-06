@@ -83,7 +83,13 @@ if(curr_data['total_balance'] < prev_data['total_balance']):
 else:
 	btc_per_day = 86400.0 * (curr_data['total_balance']-prev_data['total_balance']) / (measurement_time_delta) 
 
-print("Time between measurements: {0:f}".format(measurement_time_delta))	
+print("Time between measurements: {0:f}".format(measurement_time_delta))
+
+if(measurement_time_delta < 50.0):
+	#For whatever reason, this latest measurement was unexpectedly close to in time
+	#to the previous measurement. I don't trust the btc_per_day calculation in this
+	#case, so we'll just quit before entering these measurements.
+	sys.exit(0)
 
 
 with open(prev_value_file, 'wb') as f:
