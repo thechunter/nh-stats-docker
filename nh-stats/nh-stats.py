@@ -12,6 +12,8 @@ import pickle
 import time
 import os
 
+curr_timestamp = time.time()
+
 IP = "127.0.0.1"
 DB = "nhstats"
 USER = "pythonwriter"
@@ -31,7 +33,7 @@ curr_price = crypto_api.get_btc_price(FIAT)
 
 print("Balances: \n")
 balances = crypto_api.get_balances(wallet=WALLET)
-curr_timestamp = time.time()
+
 
 num_algos = len(balances)
 total_balance = 0.0
