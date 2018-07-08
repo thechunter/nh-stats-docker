@@ -91,6 +91,7 @@
         "x": 0,
         "y": 0
       },
+      "hideTimeOverride": true,
       "id": 7,
       "interval": null,
       "links": [],
@@ -137,7 +138,7 @@
             },
             {
               "params": [
-                "none"
+                "previous"
               ],
               "type": "fill"
             }
@@ -157,7 +158,7 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "distinct"
               }
             ]
           ],
@@ -165,6 +166,8 @@
         }
       ],
       "thresholds": "1000,1000",
+      "timeFrom": null,
+      "timeShift": "10s",
       "title": "Current Mining Gains per Day",
       "transparent": true,
       "type": "singlestat",
@@ -203,6 +206,7 @@
         "x": 8,
         "y": 0
       },
+      "hideTimeOverride": true,
       "id": 8,
       "interval": null,
       "links": [],
@@ -249,7 +253,7 @@
             },
             {
               "params": [
-                "none"
+                "previous"
               ],
               "type": "fill"
             }
@@ -269,7 +273,7 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "distinct"
               }
             ]
           ],
@@ -277,6 +281,7 @@
         }
       ],
       "thresholds": "1000,1000",
+      "timeShift": "10s",
       "title": "Current Energy Costs per Day",
       "transparent": true,
       "type": "singlestat",
@@ -315,6 +320,7 @@
         "x": 16,
         "y": 0
       },
+      "hideTimeOverride": true,
       "id": 9,
       "interval": null,
       "links": [],
@@ -361,7 +367,7 @@
             },
             {
               "params": [
-                "none"
+                "previous"
               ],
               "type": "fill"
             }
@@ -381,7 +387,7 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "distinct"
               }
             ]
           ],
@@ -389,6 +395,7 @@
         }
       ],
       "thresholds": "1000,1000",
+      "timeShift": "10s",
       "title": "Current Profit per Day",
       "transparent": true,
       "type": "singlestat",
@@ -404,6 +411,229 @@
     },
     {
       "aliasColors": {
+        "Energy Costs (fiat/day)": "#bf1b00",
+        "Profit (fiat/day)": "#5195ce",
+        "fiat/day": "#508642"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_NHSTATS}",
+      "decimals": 2,
+      "fill": 3,
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 3,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "Profit (fiat/day)",
+          "fill": 0,
+          "linewidth": 5
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Mining Gains (fiat/day)",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "fiat_per_day",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "distinct"
+              },
+              {
+                "params": [
+                  "30"
+                ],
+                "type": "moving_average"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Energy Costs (fiat/day)",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "energy_cost_fiat_per_day",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "distinct"
+              },
+              {
+                "params": [
+                  "30"
+                ],
+                "type": "moving_average"
+              },
+              {
+                "params": [
+                  " * -1"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Profit (fiat/day)",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "profit_fiat_per_day",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "distinct"
+              },
+              {
+                "params": [
+                  "30"
+                ],
+                "type": "moving_average"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "fiat/day",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
         "BTC/day": "#508642"
       },
       "bars": false,
@@ -415,7 +645,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 12
       },
       "id": 2,
       "legend": {
@@ -790,229 +1020,6 @@
       }
     },
     {
-      "aliasColors": {
-        "Energy Costs (fiat/day)": "#bf1b00",
-        "Profit (fiat/day)": "#5195ce",
-        "fiat/day": "#508642"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_NHSTATS}",
-      "decimals": 2,
-      "fill": 3,
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 12
-      },
-      "id": 3,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Profit (fiat/day)",
-          "fill": 0,
-          "linewidth": 5
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "Mining Gains (fiat/day)",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "fiat_per_day",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "distinct"
-              },
-              {
-                "params": [
-                  "30"
-                ],
-                "type": "moving_average"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "Energy Costs (fiat/day)",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "energy_cost_fiat_per_day",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "distinct"
-              },
-              {
-                "params": [
-                  "30"
-                ],
-                "type": "moving_average"
-              },
-              {
-                "params": [
-                  " * -1"
-                ],
-                "type": "math"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "Profit (fiat/day)",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "profit_fiat_per_day",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "C",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "distinct"
-              },
-              {
-                "params": [
-                  "30"
-                ],
-                "type": "moving_average"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "fiat/day",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
       "aggregate": "AVG",
       "color": {
         "colorScheme": "interpolateGreens",
@@ -1108,7 +1115,7 @@
       }
     },
     {
-      "content": "###### _nh-stats dashboard v1.0_",
+      "content": "###### _nh-stats dashboard v1.1_",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -1162,5 +1169,5 @@
   "timezone": "",
   "title": "nh-stats",
   "uid": "nh-stats",
-  "version": 5
+  "version": 9
 }
