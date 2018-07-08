@@ -14,5 +14,9 @@ BTC: 3GQjpuKzGRk4Hzx1CWt5Q4F7FHdvmzFSMy
 
 ## Changelog
 
+### v1.1 - July 8, 2018
+* Improved accuracy of plotted estimates by tightening up timings.
+* See [closed issues](https://github.com/thechunter/nh-stats-docker/milestone/1?closed=1) for more details.
+
 ### v1.0 - July 4, 2018
 * Initial release. Built on Grafana 5.2.0 and InfluxDB 1.5.4
