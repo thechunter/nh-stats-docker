@@ -29,6 +29,14 @@ if WEMO_DEVICE_IP == 'false':
 FIAT = os.environ['NHS_FIAT_CURRENCY']
 prev_value_file = '/nh-stats/prev_balance.pickle'
 
+def write_influxDB(data):
+	print(data)	
+	r = requests.post("http://{0:s}:8086/write?db={1:s}".format(IP,DB), auth=(USER, PASSWORD), data=data)
+	if r.status_code != 204:
+	    print("Failed to add point to influxdb ({0}) - aborting.".format(r.status_code))
+	    sys.exit(1)  	
+
+
 curr_price = crypto_api.get_btc_price(FIAT)
 
 print("Balances: \n")
@@ -44,27 +52,15 @@ selected_algos = [5, 8, 14, 20, 24, 32, 33]
 
 running_total = 0.0
 for idx_algo in selected_algos:
-	v = "crypto_{0:d}_{1:s} value={2:f}".format(idx_algo, balances[idx_algo]['algo_str'],balances[idx_algo]['balance'])
-	print(v)
-	r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-	if r.status_code != 204:
-	    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-	    sys.exit(1)  	
+	v = "crypto_{0:d}_{1:s} value={2:f}".format(idx_algo, balances[idx_algo]['algo_str'],balances[idx_algo]['balance'])	
+	write_influxDB(v)
 	running_total = running_total + balances[idx_algo]['balance']
 
 v = "crypto_other value={0:f}".format(total_balance-running_total)
-print(v)
-r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-if r.status_code != 204:
-    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-    sys.exit(1)  	
+write_influxDB(v)
 
 v = "crypto_total value={0:f}".format(total_balance)
-print(v)
-r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-if r.status_code != 204:
-    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-    sys.exit(1)  	
+write_influxDB(v)
 
 #write current total to file
 curr_data = {
@@ -105,18 +101,11 @@ print("+{0} BTC/day".format(btc_per_day))
 print("+{0} fiat/day".format(fiat_per_day))
 
 # Write to InfluxDB
+v = "btc_per_day value={0:f}".format(btc_per_day)
+write_influxDB(v)
 
-v = 'btc_per_day value=%f' % btc_per_day
-r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-if r.status_code != 204:
-    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-    sys.exit(1)
-
-v = 'fiat_per_day value=%f' % fiat_per_day
-r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-if r.status_code != 204:
-    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-    sys.exit(1)    
+v = "fiat_per_day value={0:f}".format(fiat_per_day)
+write_influxDB(v)
 
 
 #Get power usage
@@ -125,7 +114,7 @@ energy_cost_fiat_per_day = DEFAULT_ENERGY_COST_FIAT_PER_DAY
 if(WEMO_DEVICE_IP != False):
 	port = pywemo.ouimeaux_device.probe_wemo(WEMO_DEVICE_IP)
 	if(port):
-		url = 'http://%s:%i/setup.xml' % (WEMO_DEVICE_IP, port)
+		url = "http://{0:s}:{1:d}/setup.xml".format(WEMO_DEVICE_IP, port)
 		device = pywemo.discovery.device_from_description(url, None)
 		device.update_insight_params()
 		current_power_mw = float(device.current_power)
@@ -137,17 +126,11 @@ profit_fiat_per_day = fiat_per_day-energy_cost_fiat_per_day
 print("-{0} fiat/day (energy cost)".format(energy_cost_fiat_per_day))
 print("={0} fiat/day (profit)".format(profit_fiat_per_day))
 
-v = 'energy_cost_fiat_per_day value=%f' % energy_cost_fiat_per_day
-r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-if r.status_code != 204:
-    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-    sys.exit(1)  
+v = "energy_cost_fiat_per_day value={0:f}".format(energy_cost_fiat_per_day)
+write_influxDB(v)
 
-v = 'profit_fiat_per_day value=%f' % profit_fiat_per_day
-r = requests.post("http://%s:8086/write?db=%s" %(IP, DB), auth=(USER, PASSWORD), data=v)
-if r.status_code != 204:
-    print 'Failed to add point to influxdb (%d) - aborting.' %r.status_code
-    sys.exit(1)  	
+v = "profit_fiat_per_day value={0:f}".format(profit_fiat_per_day)
+write_influxDB(v)
 
 
 
