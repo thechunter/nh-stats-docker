@@ -13,4 +13,4 @@ docker run -d \
   -e NHS_WEMO_DEVICE_IP=false \
   -e NHS_FIAT_CURRENCY="USD" \
   -e NHS_ENERGY_COST_FIAT_PER_KWHR=.1 \
-  thechunter/nh-stats:latest
+  thechunter/nh-stats-dev:latest
