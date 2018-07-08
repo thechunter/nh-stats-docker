@@ -104,9 +104,6 @@ print("+{0} fiat/day".format(fiat_per_day))
 v = "btc_per_day value={0:f}".format(btc_per_day)
 write_influxDB(v)
 
-v = "fiat_per_day value={0:f}".format(fiat_per_day)
-write_influxDB(v)
-
 
 #Get power usage
 energy_cost_fiat_per_day = DEFAULT_ENERGY_COST_FIAT_PER_DAY
@@ -126,10 +123,16 @@ profit_fiat_per_day = fiat_per_day-energy_cost_fiat_per_day
 print("-{0} fiat/day (energy cost)".format(energy_cost_fiat_per_day))
 print("={0} fiat/day (profit)".format(profit_fiat_per_day))
 
-v = "energy_cost_fiat_per_day value={0:f}".format(energy_cost_fiat_per_day)
-write_influxDB(v)
 
-v = "profit_fiat_per_day value={0:f}".format(profit_fiat_per_day)
+
+v1 = "fiat_per_day value={0:f}".format(fiat_per_day)
+
+v2 = "energy_cost_fiat_per_day value={0:f}".format(energy_cost_fiat_per_day)
+
+v3 = "profit_fiat_per_day value={0:f}".format(profit_fiat_per_day)
+
+v = v1+"\n"+v2+"\n"+v3
+
 write_influxDB(v)
 
 
