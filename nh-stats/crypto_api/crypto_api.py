@@ -25,12 +25,24 @@ def req_url(url):
 
 def get_btc_price(fiat='USD'):
     response = req_url(URL_BTC_PRICE.format(fiat))
+
+    if response is None:
+        return None
+
     curr_price = response['BTC'][fiat]
     return curr_price
 
 
 def get_balances(wallet=WALLET):
     response = req_url(URL_STATS_PROVIDER.format(wallet))
+
+    if response is None:
+        return None
+
+    if 'error' in response['result']:
+        print(response['result']['error'])
+        return None
+
     curr_stats = response['result']['stats']
     num_resp = len(curr_stats)
 
