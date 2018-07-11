@@ -42,6 +42,18 @@ curr_price = crypto_api.get_btc_price(FIAT)
 print("Balances: \n")
 balances = crypto_api.get_balances(wallet=WALLET)
 
+if balances is None:
+	print("Error in NH API call. Exiting before logging anything")
+	sys.exit(1)
+
+#Heuristic: we're going to skip writing zero-valued balances
+total_balance = 0.0
+for idx_algo in range(35):
+	total_balance = total_balance + balances[idx_algo]['balance']
+
+if(total_balance == 0.0):
+	print("No balance reported. Exiting before logging anything")
+	sys.exit(1)
 
 num_algos = len(balances)
 total_balance = 0.0
