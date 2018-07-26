@@ -20,11 +20,11 @@ USER = "pythonwriter"
 PASSWORD = os.environ['NHS_INFLUXDB_PYTHON_WRITE_PASSWORD']
 WALLET = os.environ['NHS_INTERNAL_WALLET']
 ENERGY_COST_KWHR = float(os.environ['NHS_ENERGY_COST_FIAT_PER_KWHR'])
-WEMO_DEVICE_IP = os.environ['NHS_WEMO_DEVICE_IP']
+WEMO_DEVICE_IP_VEC =  os.environ['NHS_WEMO_DEVICE_IP'].split(',')
 DEFAULT_ENERGY_COST_FIAT_PER_DAY = float(os.environ['NHS_DEFAULT_ENERGY_COST_FIAT_PER_DAY'])
 
-if WEMO_DEVICE_IP == 'false':
-	WEMO_DEVICE_IP = False
+if WEMO_DEVICE_IP_VEC == 'false':
+	WEMO_DEVICE_IP_VEC = False
 
 FIAT = os.environ['NHS_FIAT_CURRENCY']
 prev_value_file = '/nh-stats/prev_balance.pickle'
@@ -118,17 +118,22 @@ write_influxDB(v)
 
 
 #Get power usage
-energy_cost_fiat_per_day = DEFAULT_ENERGY_COST_FIAT_PER_DAY
 
-if(WEMO_DEVICE_IP != False):
-	port = pywemo.ouimeaux_device.probe_wemo(WEMO_DEVICE_IP)
-	if(port):
-		url = "http://{0:s}:{1:d}/setup.xml".format(WEMO_DEVICE_IP, port)
-		device = pywemo.discovery.device_from_description(url, None)
-		device.update_insight_params()
-		current_power_mw = float(device.current_power)
-		current_power_kw = current_power_mw / 1000 / 1000
-		energy_cost_fiat_per_day = current_power_kw * ENERGY_COST_KWHR * 24		
+if(WEMO_DEVICE_IP_VEC != False):
+
+	energy_cost_fiat_per_day = 0.0;
+
+	for WEMO_DEVICE_IP in WEMO_DEVICE_IP_VEC:	
+		port = pywemo.ouimeaux_device.probe_wemo(WEMO_DEVICE_IP)
+		if(port):
+			url = "http://{0:s}:{1:d}/setup.xml".format(WEMO_DEVICE_IP, port)
+			device = pywemo.discovery.device_from_description(url, None)
+			device.update_insight_params()
+			current_power_mw = float(device.current_power)
+			current_power_kw = current_power_mw / 1000 / 1000
+			energy_cost_fiat_per_day += current_power_kw * ENERGY_COST_KWHR * 24	
+else:
+	energy_cost_fiat_per_day = DEFAULT_ENERGY_COST_FIAT_PER_DAY	
 
 profit_fiat_per_day = fiat_per_day-energy_cost_fiat_per_day
 
