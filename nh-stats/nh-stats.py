@@ -54,7 +54,7 @@ for WALLET in WALLET_VEC:
 		for idx_algo in range(35):
 			balances[idx_algo]['balance'] += balances_tmp[idx_algo]['balance']
 
-	idx_wallet++
+	idx_wallet+=1
 
 #Heuristic: we're going to skip writing zero-valued balances
 total_balance = 0.0
