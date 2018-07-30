@@ -18,7 +18,7 @@ IP = "127.0.0.1"
 DB = "nhstats"
 USER = "pythonwriter"
 PASSWORD = os.environ['NHS_INFLUXDB_PYTHON_WRITE_PASSWORD']
-WALLET = os.environ['NHS_INTERNAL_WALLET']
+WALLET_VEC = os.environ['NHS_INTERNAL_WALLET'].split(',')
 ENERGY_COST_KWHR = float(os.environ['NHS_ENERGY_COST_FIAT_PER_KWHR'])
 WEMO_DEVICE_IP_VEC =  os.environ['NHS_WEMO_DEVICE_IP'].split(',')
 DEFAULT_ENERGY_COST_FIAT_PER_DAY = float(os.environ['NHS_DEFAULT_ENERGY_COST_FIAT_PER_DAY'])
@@ -36,15 +36,25 @@ def write_influxDB(data):
 	    print("Failed to add point to influxdb ({0}) - aborting.".format(r.status_code))
 	    sys.exit(1)  	
 
-
 curr_price = crypto_api.get_btc_price(FIAT)
 
 print("Balances: \n")
-balances = crypto_api.get_balances(wallet=WALLET)
 
-if balances is None:
-	print("Error in NH API call. Exiting before logging anything")
-	sys.exit(1)
+idx_wallet = 0
+for WALLET in WALLET_VEC:
+	if idx_wallet == 0:
+		balances = crypto_api.get_balances(wallet=WALLET)
+	else:
+		balances_tmp = crypto_api.get_balances(wallet=WALLET)
+
+		if balances_tmp is None:
+			print("Error in NH API call. Exiting before logging anything")
+			sys.exit(1)
+
+		for idx_algo in range(35):
+			balances[idx_algo]['balance'] += balances_tmp[idx_algo]['balance']
+
+	idx_wallet++
 
 #Heuristic: we're going to skip writing zero-valued balances
 total_balance = 0.0
